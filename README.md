@@ -20,7 +20,7 @@ wabot-bsbt
 
 ## Join Group Bot
 
-[`Group Whatsapp`](https://chat.whatsapp.com/JMEkZREiG4O8T9NQGViUtx)
+[`Group Whatsapp`](https://chat.whatsapp.com/GEpKLwib6jaCiusObyzWhP)
 
 ### FOR TERMUX USER/UNTUK PENGGUNA TERMUX
 
