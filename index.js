@@ -29,7 +29,7 @@ async function startnaimi() {
     const naimi = naimiConnect({
         logger: pino({ level: 'silent' }),
         printQRInTerminal: true,
-        browser: ['Karuta Multi Device','Safari','1.0.0'],
+        browser: ['Vallzz Multi Device','Chrome','1.0.0'],
         auth: state,
         version: getVersionWaweb() || [2, 2204, 13]
     })
@@ -39,7 +39,7 @@ async function startnaimi() {
 █████═╝░███████║██████╔╝██║░░░██║░░░██║░░░███████║
 ██╔═██╗░██╔══██║██╔══██╗██║░░░██║░░░██║░░░██╔══██║
 ██║░╚██╗██║░░██║██║░░██║╚██████╔╝░░░██║░░░██║░░██║
-╚═╝░░╚═╝╚═╝░░╚═╝╚═╝░░╚═╝░╚═════╝░░░░╚═╝░░░╚═╝░░╚═╝`, 'red'))
+╚═╝░░╚═╝╚═╝░░╚═╝╚═╝░░╚═╝░╚═════╝░░░░╚═╝░░░╚═╝░░╚═╝`, 'magenta'))
 	
 	console.log(color('======================', 'fuchsia'),color('\n[Yukishima 乂 KiZakiXD]', 'pink'),color('\nThanks To: \n➸ Allah Swt.\n➸ Dika Ardnt.\n➸ KiZakiXD\n➸ Yukishima', 'yellow'),color('\n======================', 'fuchsia'))
     store.bind(naimi.ev)
