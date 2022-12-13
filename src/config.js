@@ -1,7 +1,7 @@
 /**
-   * Create By Dika Ardnt.
-   * Contact Me on wa.me/6288292024190
-   * Follow https://github.com/DikaArdnt
+   * Create By Vall ryell.
+   * Contact Me on wa.me/6281262319468
+   * Follow https://github.com/Vall-Afk
 */
 
 const fs = require('fs')
@@ -19,19 +19,19 @@ global.doc4 = 'application/zip'
 global.doc5 = 'application/pdf'
 global.doc6 = 'application/vnd.android.package-archive'
 global.mess = {
-    success: '*SUKSESS...*',
+    success: '*SUKSES TOD!*',
     admin: 'Fitur Khusus Admin Group!',
     botAdmin: 'Bot Harus Menjadi Admin Terlebih Dahulu!',
     owner: 'Fitur Khusus Owner Bot',
     group: 'Fitur Digunakan Hanya Untuk Group!',
     private: 'Fitur Digunakan Hanya Untuk Private Chat!',
     bot: 'Fitur Khusus Pengguna Nomor Bot',
-    wait: '*LOADING....*',
+    wait: '*LOADING...*',
     nsfw: '*[❗] NSFW TIDAK AKTIF!!*',
     wrongFormat: 'Format yg anda masukan salah',
-    banned: '*[❗] ANDA TELAH DI BANNED*',
+    banned: '*[❗] LU UDAH DI BANNED TODD.*',
     error: 'Maaf terjadi kesalahan',
-    linkna: 'Mana linknya?',
+    linkna: 'Mana linknya Tod?',
 }
 global.thumb = fs.readFileSync('./karuta/karuta.png')
 global.vidmenu = fs.readFileSync("./karuta/Karuta.mp4")
