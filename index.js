@@ -125,8 +125,8 @@ title: `WELCOME`,
 body: `Member ke : ${xmembers}`,
 mediaType:2,
 thumbnail: ppusernya,
-sourceUrl: `https://www.instagram.com/yusufriz00`,
-mediaUrl: `https://www.instagram.com/yusufriz00`
+sourceUrl: `https://www.instagram.com/angelicxye`,
+mediaUrl: `https://www.instagram.com/angelicxye`
 }}
 }
 naimi.sendMessage(anu.id, buttonMessage, {quoted:unicorndoc})
@@ -157,8 +157,8 @@ title: `GOOD BYE`,
 body: `Member ke : ${xmembers}`,
 mediaType:2,
 thumbnail: ppusernya,
-sourceUrl: `https://www.instagram.com/yusufriz00`,
-mediaUrl: `https://www.instagram.com/yusufriz00`
+sourceUrl: `https://www.instagram.com/angelicxye`,
+mediaUrl: `https://www.instagram.com/angelicxye`
 }}
 }
 naimi.sendMessage(anu.id, buttonMessage, {quoted:unicorndoc})
