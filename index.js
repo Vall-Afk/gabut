@@ -29,7 +29,7 @@ async function startnaimi() {
     const naimi = naimiConnect({
         logger: pino({ level: 'silent' }),
         printQRInTerminal: true,
-        browser: ['Vallzz Multi Device','Chrome','1.0.0'],
+        browser: ['Angel Multi Device','Safari','1.0.0'],
         auth: state,
         version: getVersionWaweb() || [2, 2204, 13]
     })
@@ -139,7 +139,7 @@ const xmembers = metadata.participants.length
 let unicorndoc = {key: {fromMe: false,"participant":"0@s.whatsapp.net", "remoteJid": "916909137213-1604595598@g.us"}, "message": {orderMessage: {itemCount: 9999999,status: 200, thumbnail: ppusernya, surface: 200, message: `${metadata.subject}`, orderTitle: 'naimi', sellerJid: '0@s.whatsapp.net'}}, contextInfo: {"forwardingScore":999,"isForwarded":true},sendEphemeral: true}
 naimibody = `*Good Bye @${naimiName.split("@")[0]}*\n\n*Semoga kamu bahagia di sana*`
 let buttons = [
-{buttonId: `wkwwk`, buttonText: {displayText: 'GOOD BYE'}, type: 1}
+{buttonId: `wkwwk`, buttonText: {displayText: 'Selamat Tinggal'}, type: 1}
 ]
 let buttonMessage = {
 document: fs.readFileSync('./karuta/karuta.xlsx'),
