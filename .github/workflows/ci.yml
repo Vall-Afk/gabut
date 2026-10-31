@@ -22,7 +22,10 @@ jobs:
       - name: Check JavaScript syntax
         run: |
           find . -path './node_modules' -prune -o -name '*.js' -type f -print0 | xargs -0 -n1 node --check
-      - name: Verify Baileys ESM import
+      - name: Verify Baileys ESM import in isolation
         run: |
-          npm install --ignore-scripts --no-audit --no-fund
-          node --input-type=commonjs -e "import('@whiskeysockets/baileys').then(m => { for (const key of ['default','useMultiFileAuthState','fetchLatestBaileysVersion','DisconnectReason','proto']) if (!(key in m)) throw new Error('Missing Baileys export: ' + key); console.log('Baileys ESM exports OK') })"
+          mkdir -p /tmp/baileys-smoke
+          cd /tmp/baileys-smoke
+          npm init -y
+          npm install --ignore-scripts --no-audit --no-fund @whiskeysockets/baileys@6.7.24
+          node --input-type=module -e "import('/tmp/baileys-smoke/node_modules/@whiskeysockets/baileys/lib/index.js').then(m => { for (const key of ['default','useMultiFileAuthState','fetchLatestBaileysVersion','DisconnectReason','proto']) if (!(key in m)) throw new Error('Missing Baileys export: ' + key); console.log('Baileys ESM exports OK') })"
