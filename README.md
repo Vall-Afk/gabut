@@ -14,7 +14,7 @@
 ```bash
 git clone https://github.com/Vall-Afk/gabut
 cd gabut
-npm install
+npm install --legacy-peer-deps
 ```
 
 ## Konfigurasi owner dan bot
