@@ -29,7 +29,6 @@
     "axios": "^0.24.0",
     "amethyste-api": "^1.1.5",
     "chalk": "^4.1.2",
-    "caliph-api": "git+https://github.com/caliphdev/caliph-api.git",
     "cheerio": "^1.0.0-rc.10",
     "clui": "^0.3.6",
     "dhn-api": "^1.1.3",
