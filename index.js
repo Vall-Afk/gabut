@@ -44,12 +44,13 @@ const store = {
 }
 const { color, bgcolor } = require("./lib/color")
 async function startnaimi() {
+    let naimiHandler
     try {
         baileysModule = await import('@whiskeysockets/baileys')
         ;({ default: naimiConnect, useMultiFileAuthState, fetchLatestBaileysVersion, DisconnectReason, generateForwardMessageContent, prepareWAMessageMedia, generateWAMessageFromContent, downloadContentFromMessage, jidDecode, proto } = baileysModule)
         const myfunc = require('./lib/myfunc')
         myfunc.setBaileys(baileysModule)
-        const naimiHandler = require('./naimi')
+        naimiHandler = require('./naimi')
         naimiHandler.setBaileys(baileysModule)
     } catch (error) {
         console.error('[Baileys] Gagal memuat Baileys ESM. Pastikan Node.js >=20 dan dependency terpasang.', error)
