@@ -1,6 +1,7 @@
 process.on('uncaughtException', console.error)
 require('./src/config')
-const { BufferJSON, WA_DEFAULT_EPHEMERAL, generateWAMessageFromContent, proto, generateWAMessageContent, generateWAMessage, prepareWAMessageMedia, areJidsSameUser, getContentType } = require('@whiskeysockets/baileys')
+let { BufferJSON, WA_DEFAULT_EPHEMERAL, generateWAMessageFromContent, proto, generateWAMessageContent, generateWAMessage, prepareWAMessageMedia, areJidsSameUser, getContentType } = {}
+
 const fs = require('fs')
 const util = require('util')
 const chalk = require('chalk')
@@ -6079,3 +6080,8 @@ fs.watchFile(file, () => {
 	delete require.cache[file]
 	require(file)
 })
+
+
+module.exports.setBaileys = (baileys) => {
+    ;({ BufferJSON, WA_DEFAULT_EPHEMERAL, generateWAMessageFromContent, proto, generateWAMessageContent, generateWAMessage, prepareWAMessageMedia, areJidsSameUser, getContentType } = baileys)
+}
