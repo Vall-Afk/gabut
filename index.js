@@ -39,7 +39,7 @@ async function startnaimi() {
 	console.log(color('======================', 'fuchsia'),color('\n[Yukishima 乂 KiZakiXD]', 'pink'),color('\nThanks To: \n➸ Allah Swt.\n➸ Dika Ardnt.\n➸ KiZakiXD\n➸ Yukishima', 'yellow'),color('\n======================', 'fuchsia'))
     store.bind(naimi.ev)
 
-    naimi.ws.on('CB:call', async (json) => {
+    naimi.ws?.on?.('CB:call', async (json) => {
     const callerId = json.content[0].attrs['call-creator']
     if (json.content[0].tag == 'offer') {
     let pa7rick = await naimi.sendContact(callerId, setting.owner1)
@@ -227,12 +227,30 @@ naimi.sendMessage(anu.id, buttonMessage, {quoted:unicorndoc})
 
     naimi.serializeM = (m) => smsg(naimi, m, store)
 
-    naimi.ev.on('connection.update', async (update) => {
-        const { connection, lastDisconnect } = update
-        if (connection === 'close') {
-            lastDisconnect.error?.output?.statusCode !== DisconnectReason.loggedOut ? startnaimi() : console.log('Koneksi Terputus...')
+    naimi.ev.on('connection.update', (update) => {
+        const { connection, lastDisconnect, qr } = update
+
+        if (qr) console.log('[Baileys] QR tersedia. Pindai melalui Perangkat Tertaut WhatsApp.')
+
+        if (connection === 'open') {
+            console.log('[Baileys] WhatsApp berhasil terhubung.')
+        } else if (connection === 'close') {
+            const statusCode = lastDisconnect?.error?.output?.statusCode
+            const shouldReconnect = statusCode !== DisconnectReason.loggedOut
+
+            console.log('[Baileys] Koneksi terputus.', {
+                statusCode,
+                reconnect: shouldReconnect
+            })
+
+            if (shouldReconnect) {
+                setTimeout(() => {
+                    startnaimi().catch(error => console.error('[Baileys] Gagal menyambungkan ulang:', error))
+                }, 3000)
+            } else {
+                console.log('[Baileys] Sesi logout. Hapus folder autentikasi hanya jika ingin menautkan ulang perangkat.')
+            }
         }
-        console.log('Koneksi Terhubung...', update)
     })
 
     naimi.ev.on('creds.update', saveCreds)
