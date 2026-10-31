@@ -1,77 +1,62 @@
-# gabut
-Hanya recode punya mastah.
-wabot-gabut
+# Laurentia-MD.V2
 
-no contributor.
+**Laurentia-MD.V2** adalah bot WhatsApp berbasis Baileys Multi-Device, dikelola oleh **Vall**.
 
-## Join Group Bot
+## Kepemilikan dan pengembang
 
-[`Group Whatsapp`](https://chat.whatsapp.com/GEpKLwib6jaCiusObyzWhP)
+**Laurentia-MD.V2 merupakan bot milik pribadi Vall-Afk/Strelicaa.**
 
-### FOR TERMUX USER/UNTUK PENGGUNA TERMUX
+- **Pemilik / Owner:** Vall-Afk/Strelicaa.
+- **Nomor WhatsApp Owner:** 6287721373781
+- **Nama bot:** Laurentia-MD.V2
+- **Repository resmi:** https://github.com/Vall-Afk/gabut
 
-```bash
+Script bot ini dikelola dan dikembangkan secara pribadi oleh owner. Identitas, konfigurasi, dan pengembangan proyek berada di bawah kendali Vall-Afk/Strelicaa. Dilarang menghapus atau mengganti atribusi kepemilikan tanpa izin owner.
 
-> pkg update && pkg upgrade
+## Persyaratan
 
-> pkg install git -y
+- Node.js 20 atau lebih baru
+- npm
+- FFmpeg dan ImageMagick untuk fitur media tertentu
+- Akun WhatsApp owner yang tercantum pada `src/setting.json`
 
-> pkg install nodejs -y
-
-> pkg install ffmpeg -y
-
-> pkg install imagemagick -y
-
-> git clone https://github.com/Vall-Afk/gabut
-
-> cd gabut
-
-> npm install
-
-```
-
-###### Run
+## Instalasi
 
 ```bash
-
-> node . [<session name>] (session name is optional)
-
+git clone https://github.com/Vall-Afk/gabut
+cd gabut
+npm install --legacy-peer-deps
 ```
 
----------
+## Konfigurasi owner dan bot
 
-### FOR WINDOWS/VPS/RDP USER (UNTUK PENGGUNA WINDOWS/VPS/RDP)
+Edit `src/setting.json`:
 
-* Download And Install Git [`Click Here`](https://git-scm.com/downloads) <br>
+- `ownerNumber`: JID WhatsApp owner (format `nomor@s.whatsapp.net`)
+- `owner`: nomor owner dalam digit internasional tanpa tanda `+`
+- `owner1`: array nomor owner untuk kartu kontak
+- `ownerName`: nama tampilan owner
+- `botName`: nama bot, default `Laurentia-MD.V2`
+- `sessionName`: nama dasar folder sesi autentikasi
 
-* Download And Install NodeJS [`Click Here`](https://nodejs.org/en/download) <br>
+Nomor owner yang dikonfigurasi untuk rilis ini adalah 6287721373781 (Vall-Afk/Strelicaa.). Jangan membagikan folder sesi atau file kredensial karena dapat memberikan akses ke akun WhatsApp yang tertaut.
 
-* Download And Install FFMPEG [`Click Here`](https://ffmpeg.org/download.html) (don't forget to path) 
-
-* Download And Install ImageMagick [`Click Here`](https://imagemagick.org/script/download.php) (if nulis want work,  checklist columns 1,2,3,5,6) 
+## Menjalankan
 
 ```bash
-
-> git clone https://github.com/Vall-Afk/gabut
-
-> cd gabut
-
-> npm install
-
+npm start
 ```
 
-###### Run/Jalankan
+Pada koneksi pertama, pindai QR dari menu **Perangkat Tertaut** WhatsApp. Baileys MD menyimpan kredensial pada folder `session_auth/` (atau nama sesuai `sessionName`). Cadangkan folder tersebut secara privat dan jangan commit ke Git.
 
-```bash
+## Catatan migrasi
 
-> node index.js
+- Menggunakan `@whiskeysockets/baileys` 6.7.24.
+- Menggunakan autentikasi Multi-File Auth State.
+- Membutuhkan Node.js >=20.
+- Sesi single-file dari implementasi lama tidak otomatis dikonversi. Simpan file sesi lama sebagai cadangan; pairing ulang mungkin diperlukan.
+- GitHub Actions memeriksa sintaks JavaScript dan impor ESM Baileys. Pemeriksaan CI bukan pengganti uji koneksi WhatsApp langsung.
 
-```
+## Repository
 
---------------
-
-### Thanks To 
-
-[`Sensei`](https://github.com/egmu)
-
-[`Vall`](https://github.com/Vall-Afk)
+https://github.com/Vall-Afk/gabut

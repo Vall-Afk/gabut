@@ -1,9 +1,9 @@
 require('./src/config')
-const { default: naimiConnect, useSingleFileAuthState, DisconnectReason, generateForwardMessageContent, prepareWAMessageMedia, generateWAMessageFromContent, generateMessageID, downloadContentFromMessage, makeInMemoryStore, jidDecode, proto } = require("@adiwajshing/baileys")
+let naimiConnect, useMultiFileAuthState, fetchLatestBaileysVersion, DisconnectReason, generateForwardMessageContent, prepareWAMessageMedia, generateWAMessageFromContent, downloadContentFromMessage, jidDecode, proto
+let baileysModule
 const fs = require('fs')
 let setting = JSON.parse(fs.readFileSync('./src/setting.json'))
 let welkom = JSON.parse(fs.readFileSync('./database/group/welcome.json'))
-const { state, saveState } = useSingleFileAuthState(`./${setting.sessionName}.json`)
 const pino = require('pino')
 const chalk = require('chalk')
 const FileType = require('file-type')
@@ -12,26 +12,84 @@ const moment = require('moment-timezone')
 const { imageToWebp, videoToWebp, writeExifImg, writeExifVid } = require('./lib/exif')
 const { smsg, isUrl, generateMessageTag, getBuffer, getSizeMedia, fetchJson, await, sleep } = require('./lib/myfunc')
 
-const store = makeInMemoryStore({ logger: pino().child({ level: 'silent', stream: 'store' }) })
+// Baileys 6.7.x no longer exports makeInMemoryStore; keep the small
+// message/contact cache this legacy bot actually uses.
+const store = {
+    contacts: {},
+    messages: {},
+    presences: {},
+    _chats: new Map(),
+    chats: {
+        all: () => [...store._chats.values()]
+    },
+    bind(ev) {
+        ev.on('messages.upsert', ({ messages = [] }) => {
+            for (const message of messages) {
+                const jid = message.key?.remoteJid
+                const id = message.key?.id
+                if (!jid || !id) continue
+                if (!this.messages[jid]) this.messages[jid] = { array: [] }
+                const bucket = this.messages[jid].array
+                const existing = bucket.findIndex(item => item.key?.id === id)
+                if (existing >= 0) bucket[existing] = message
+                else bucket.unshift(message)
+                if (bucket.length > 50) bucket.length = 50
+            }
+        })
+        ev.on('chats.upsert', updates => {
+            for (const chat of updates) if (chat.id) this._chats.set(chat.id, { ...(this._chats.get(chat.id) || {}), ...chat })
+        })
+        ev.on('chats.update', updates => {
+            for (const chat of updates) if (chat.id) this._chats.set(chat.id, { ...(this._chats.get(chat.id) || {}), ...chat })
+        })
+        ev.on('chats.delete', ids => {
+            for (const id of ids) this._chats.delete(typeof id === 'string' ? id : id.id)
+        })
+        ev.on('contacts.upsert', updates => {
+            for (const contact of updates) {
+                if (contact.id) this.contacts[contact.id] = { ...(this.contacts[contact.id] || {}), ...contact }
+            }
+        })
+        ev.on('contacts.update', updates => {
+            for (const contact of updates) {
+                if (contact.id) this.contacts[contact.id] = { ...(this.contacts[contact.id] || {}), ...contact }
+            }
+        })
+        ev.on('presence.update', ({ id, presences }) => {
+            if (id) this.presences[id] = { ...(this.presences[id] || {}), ...(presences || {}) }
+        })
+    },
+    async loadMessage(jid, id) {
+        return this.messages[jid]?.array?.find(message => message.key?.id === id) || null
+    }
+}
 const { color, bgcolor } = require("./lib/color")
-const getVersionWaweb = () => {
+async function startnaimi() {
+    let naimiHandler
+    try {
+        baileysModule = await import('@whiskeysockets/baileys')
+        ;({ default: naimiConnect, useMultiFileAuthState, fetchLatestBaileysVersion, DisconnectReason, generateForwardMessageContent, prepareWAMessageMedia, generateWAMessageFromContent, downloadContentFromMessage, jidDecode, proto } = baileysModule)
+        const myfunc = require('./lib/myfunc')
+        myfunc.setBaileys(baileysModule)
+        naimiHandler = require('./naimi')
+        naimiHandler.setBaileys(baileysModule)
+    } catch (error) {
+        console.error('[Baileys] Gagal memuat Baileys ESM. Pastikan Node.js >=20 dan dependency terpasang.', error)
+        process.exit(1)
+    }
+    const { state, saveCreds } = await useMultiFileAuthState(`./${setting.sessionName}_auth`)
     let version
     try {
-        let a = fetchJson('https://web.whatsapp.com/check-update?version=1&platform=web')
-        version = [a.currentVersion.replace(/[.]/g, ', ')]
-    } catch {
-        version = [2, 2204, 13]
+        ({ version } = await fetchLatestBaileysVersion())
+    } catch (error) {
+        console.warn('[Baileys] Gagal mengambil versi WhatsApp terbaru; memakai versi bawaan library.', error.message)
     }
-    return version
-}
-
-async function startnaimi() {
     const naimi = naimiConnect({
         logger: pino({ level: 'silent' }),
         printQRInTerminal: true,
-        browser: ['Angel Multi Device','Safari','1.0.0'],
+        browser: ['Laurentia-MD.V2', 'Chrome', '1.0.0'],
         auth: state,
-        version: getVersionWaweb() || [2, 2204, 13]
+        ...(version ? { version } : {})
     })
     console.log(color('', 'cyan'), color(`
 ██╗░░██╗░█████╗░██████╗░██╗░░░██╗████████╗░█████╗░
@@ -41,10 +99,10 @@ async function startnaimi() {
 ██║░╚██╗██║░░██║██║░░██║╚██████╔╝░░░██║░░░██║░░██║
 ╚═╝░░╚═╝╚═╝░░╚═╝╚═╝░░╚═╝░╚═════╝░░░░╚═╝░░░╚═╝░░╚═╝`, 'magenta'))
 	
-	console.log(color('======================', 'fuchsia'),color('\n[Yukishima 乂 KiZakiXD]', 'pink'),color('\nThanks To: \n➸ Allah Swt.\n➸ Dika Ardnt.\n➸ KiZakiXD\n➸ Yukishima', 'yellow'),color('\n======================', 'fuchsia'))
+	console.log(color('======================', 'fuchsia'),color('\n[Laurentia-MD.V2 | Vall]', 'pink'),color('\nThanks To: \n➸ Allah Swt.\n➸ Dika Ardnt.\n➸ KiZakiXD\n➸ Vall', 'yellow'),color('\n======================', 'fuchsia'))
     store.bind(naimi.ev)
 
-    naimi.ws.on('CB:call', async (json) => {
+    naimi.ws?.on?.('CB:call', async (json) => {
     const callerId = json.content[0].attrs['call-creator']
     if (json.content[0].tag == 'offer') {
     let pa7rick = await naimi.sendContact(callerId, setting.owner1)
@@ -63,7 +121,7 @@ async function startnaimi() {
         if (!naimi.public && !mek.key.fromMe && chatUpdate.type === 'notify') return
         if (mek.key.id.startsWith('BAE5') && mek.key.id.length === 16) return
         m = smsg(naimi, mek, store)
-        require("./naimi")(naimi, m, chatUpdate, store)
+        naimiHandler(naimi, m, chatUpdate, store)
         } catch (err) {
             console.log(err)
         }
@@ -125,8 +183,8 @@ title: `WELCOME`,
 body: `Member ke : ${xmembers}`,
 mediaType:2,
 thumbnail: ppusernya,
-sourceUrl: `https://www.instagram.com/angelicxye`,
-mediaUrl: `https://www.instagram.com/angelicxye`
+sourceUrl: `https://github.com/Vall-Afk`,
+mediaUrl: `https://github.com/Vall-Afk`
 }}
 }
 naimi.sendMessage(anu.id, buttonMessage, {quoted:unicorndoc})
@@ -157,8 +215,8 @@ title: `GOOD BYE`,
 body: `Member ke : ${xmembers}`,
 mediaType:2,
 thumbnail: ppusernya,
-sourceUrl: `https://www.instagram.com/angelicxye`,
-mediaUrl: `https://www.instagram.com/angelicxye`
+sourceUrl: `https://github.com/Vall-Afk`,
+mediaUrl: `https://github.com/Vall-Afk`
 }}
 }
 naimi.sendMessage(anu.id, buttonMessage, {quoted:unicorndoc})
@@ -223,7 +281,7 @@ naimi.sendMessage(anu.id, buttonMessage, {quoted:unicorndoc})
 	for (let i of kon) {
 	    list.push({
 	    	displayName: await naimi.getName(i + '@s.whatsapp.net'),
-	    	vcard: `BEGIN:VCARD\nVERSION:3.0\nN:${await naimi.getName(i + '@s.whatsapp.net')}\nFN:${setting.ownerName}\nORG:${setting.deskripsi};\nitem1.TEL;waid=${i}:${i}\nitem1.X-ABLabel:Ponsel\nitem2.EMAIL;type=INTERNET:yukishima737@gmail.com\nitem2.X-ABLabel:Email\nitem3.URL:https://instagram.com/Yukishima3_\nitem3.X-ABLabel:Instagram\nitem4.ADR:;;Japan;;;;\nitem4.X-ABLabel:Region\nEND:VCARD`
+	    	vcard: `BEGIN:VCARD\nVERSION:3.0\nN:${await naimi.getName(i + '@s.whatsapp.net')}\nFN:${setting.ownerName}\nORG:${setting.deskripsi};\nitem1.TEL;waid=${i}:${i}\nitem1.X-ABLabel:Ponsel\nitem2.URL:https://github.com/Vall-Afk\nitem2.X-ABLabel:GitHub\nEND:VCARD`
 	    })
 	}
 	naimi.sendMessage(jid, { contacts: { displayName: `${list.length} Kontak`, contacts: list }, ...opts }, { quoted })
@@ -232,15 +290,33 @@ naimi.sendMessage(anu.id, buttonMessage, {quoted:unicorndoc})
 
     naimi.serializeM = (m) => smsg(naimi, m, store)
 
-    naimi.ev.on('connection.update', async (update) => {
-        const { connection, lastDisconnect } = update
-        if (connection === 'close') {
-            lastDisconnect.error?.output?.statusCode !== DisconnectReason.loggedOut ? startnaimi() : console.log('Koneksi Terputus...')
+    naimi.ev.on('connection.update', (update) => {
+        const { connection, lastDisconnect, qr } = update
+
+        if (qr) console.log('[Baileys] QR tersedia. Pindai melalui Perangkat Tertaut WhatsApp.')
+
+        if (connection === 'open') {
+            console.log('[Baileys] WhatsApp berhasil terhubung.')
+        } else if (connection === 'close') {
+            const statusCode = lastDisconnect?.error?.output?.statusCode
+            const shouldReconnect = statusCode !== DisconnectReason.loggedOut
+
+            console.log('[Baileys] Koneksi terputus.', {
+                statusCode,
+                reconnect: shouldReconnect
+            })
+
+            if (shouldReconnect) {
+                setTimeout(() => {
+                    startnaimi().catch(error => console.error('[Baileys] Gagal menyambungkan ulang:', error))
+                }, 3000)
+            } else {
+                console.log('[Baileys] Sesi logout. Hapus folder autentikasi hanya jika ingin menautkan ulang perangkat.')
+            }
         }
-        console.log('Koneksi Terhubung...', update)
     })
 
-    naimi.ev.on('creds.update', saveState)
+    naimi.ev.on('creds.update', saveCreds)
 
     // Add Other
     /** Send Button 5 Image

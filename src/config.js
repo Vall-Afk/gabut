@@ -1,6 +1,5 @@
 /**
-   * Create By Vall ryell.
-   * Contact Me on wa.me/6281262319468
+   * Laurentia-MD.V2 — maintained by Vall.
    * Follow https://github.com/Vall-Afk
 */
 

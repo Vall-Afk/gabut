@@ -1,6 +1,7 @@
 process.on('uncaughtException', console.error)
 require('./src/config')
-const { BufferJSON, WA_DEFAULT_EPHEMERAL, generateWAMessageFromContent, proto, generateWAMessageContent, generateWAMessage, prepareWAMessageMedia, areJidsSameUser, getContentType } = require('@adiwajshing/baileys')
+let { BufferJSON, WA_DEFAULT_EPHEMERAL, generateWAMessageFromContent, proto, generateWAMessageContent, generateWAMessage, prepareWAMessageMedia, areJidsSameUser, getContentType } = {}
+
 const fs = require('fs')
 const util = require('util')
 const chalk = require('chalk')
@@ -22,7 +23,11 @@ const ggs = require('google-it')
 const thiccysapi = require('textmaker-thiccy')
 const toHur = require('@develoka/angka-terbilang-js')
 const { performance } = require('perf_hooks')
-const caliph = require('caliph-api')
+const caliph = { downloader: { youtube: { ytmp4: async (url) => {
+    const [result] = await y2mateV(url)
+    if (!result || !result.link) throw new Error('YouTube downloader tidak mengembalikan tautan unduhan')
+    return { result: result.link, title: result.judul }
+} } } }
 const hx = require("hxz-api")
 const bocil = require("@bochilteam/scraper")
 const { Primbon } = require('scrape-primbon')
@@ -130,7 +135,7 @@ const command = body.replace(prefix, '').trim().split(/ +/).shift().toLowerCase(
 const args = body.trim().split(/ +/).slice(1)
 const pushname = m.pushName || "No Name"
 const botNumber = await naimi.decodeJid(naimi.user.id)
-const isOwner = setting.ownerNumber == m.sender ? true : ["6289519240209@s.whatsapp.net"].includes(m.sender) ? true : false
+const isOwner = Array.isArray(setting.ownerNumber) && setting.ownerNumber.includes(m.sender)
 const itsMe = m.sender == botNumber ? true : false
 const text = args.join(' ')
 const q = args.join(' ')
@@ -213,12 +218,12 @@ participant: `0@s.whatsapp.net`, ...(from ?
 }
 	const kmd = (teks) => {
 naimi.sendMessage(from, { text : teks, contextInfo:{externalAdReply:{
-title:"AiinMd BOT",
+title:"Laurentia-MD.V2",
 body: "Free WhatsApp Bot", 
 thumbnail: fs.readFileSync("./karuta/webpmobile.jpg"),
 mediaType:1,
-mediaUrl: 'https://www.instagram.com/yusufriz00',
-sourceUrl: "https://www.instagram.com/yusufriz00"}}}, { quoted: m })
+mediaUrl: 'https://github.com/Vall-Afk',
+sourceUrl: "https://github.com/Vall-Afk"}}}, { quoted: m })
 }
 try {
 let isNumber = x => typeof x === 'number' && !isNaN(x)
@@ -1021,7 +1026,7 @@ Imgnah = await getBuffer(`https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9Gc
 let btn886 = [{
 urlButton: {
 displayText: 'Instagram',
-url: 'https://instagram.com/yusufriz00'
+url: 'https://github.com/Vall-Afk'
 }
 }, {
 quickReplyButton: {
@@ -1293,7 +1298,7 @@ break
 case 'donasi':
   if (!isRegister) return reply(blomdaftar) & sendButMessage (sender, daftar1, daftar2, daftar3, { quoted: m}) 
     if (isBan) return reply(mess.banned)
-  reply('Donasi seikhlas nya kakak biar bot ini makin keren\nhttps://saweria.co/Rzal223\n\n*Donasi Lah PARA EPIC ABADDI*')
+  reply('Repository dan informasi pengembangan Laurentia-MD.V2:\nhttps://github.com/Vall-Afk/gabut')
 break
 case 'premium2':
 if (!isOwner) return reply(mess.owner)
@@ -1956,7 +1961,7 @@ for (let i of anu) {
     let btn = [{
 urlButton: {
 displayText: 'Instagram',
-url: 'https://instagram.com/Yukishima3_'
+url: 'https://github.com/Vall-Afk'
 }
 }, {
 quickReplyButton: {
@@ -2034,7 +2039,7 @@ await sleep(1500)
 let btn = [{
 urlButton: {
 displayText: 'Instagram',
-url: 'https://instagram.com/yusufriz00'
+url: 'https://github.com/Vall-Afk'
 }
 }, {
 quickReplyButton: {
@@ -2063,7 +2068,7 @@ case 'listpc': {
  let anu = await store.chats.all().filter(v => v.id.endsWith('.net')).map(v => v.id)
  let teks = `⬣ *LIST PERSONAL CHAT*\n\nTotal Chat : ${anu.length} Chat\n\n`
  for (let i of anu) {
-let nama = store.messages[i].array[0].pushName
+let nama = store.messages[i]?.array?.[0]?.pushName || 'Unknown'
 teks += `⬡ *Nama :* ${nama}\n⬡ *User :* @${i.split('@')[0]}\n⬡ *Chat :* https://wa.me/${i.split('@')[0]}\n\n=====================\n\n`
  }
  naimi.sendTextWithMentions(m.chat, teks, m)
@@ -2086,7 +2091,7 @@ teks += `⬡ *Nama :* ${metadata.subject}\n⬡ *Owner :* @${metadata.owner.split
     if (isBan) return reply(mess.banned)
     
     let id = args && /\d+\-\d+@g.us/.test(args[0]) ? args[0] : m.chat
-    let online = [...Object.keys(store.presences[id]), botNumber]
+    let online = [...Object.keys(store.presences[id] || {}), botNumber]
     naimi.sendText(m.chat, 'List Online:\n\n' + online.map(v => '⭔ @' + v.replace(/@.+/, '')).join`\n`, m, { mentions: online })
  }
  break
@@ -2170,7 +2175,7 @@ break
 case 'command':
   let sections = [
 {
-title: "DAFTAR MENU AiinMd BOT",
+title: "DAFTAR MENU Laurentia-MD.V2",
 rows: [
 {title: "𝗠𝗔𝗜𝗡 𝗠𝗘𝗡𝗨", rowId: `mainmenu`, description: `Menampilkan daftar main menu`},
 {title: "𝗚𝗥𝗢𝗨𝗣 𝗠𝗘𝗡𝗨", rowId: `groupmenu`, description: `Menampilkan daftar group menu`},
@@ -2203,7 +2208,7 @@ rows: [{title: "𝗢𝗪𝗡𝗘𝗥 𝗕𝗢𝗧", rowId: `owner`, description:
 ]
 }, 
 ]
-naimi.sendListMsg(m.chat, `Hallo ${pushname} ${ucapanWaktu}\nPilih salah satu menu di bawah`,`*© AiinMd*`, `*LIST MENU KARUTA MD*`, `Click Here`, sections, m)
+naimi.sendListMsg(m.chat, `Hallo ${pushname} ${ucapanWaktu}\nPilih salah satu menu di bawah`,`*© Laurentia-MD.V2*`, `*LIST MENU KARUTA MD*`, `Click Here`, sections, m)
 ///////MENU
 break
 case 'cerpenmenu':
@@ -4234,7 +4239,7 @@ break
 case 'igstory':
 if (!isRegister) return reply(blomdaftar) & sendButMessage (sender, daftar1, daftar2, daftar3, { quoted: m}) 
     if (isBan) return reply(mess.banned)
-if (!args[0]) return reply(`Nickname nya? Contoh :\n${prefix + command} Yukishima3_`)
+if (!args[0]) return reply(`Nickname nya? Contoh :\n${prefix + command} username`)
 hx.igstory(q)
 .then(async result => {
 for(let i of result.medias){
@@ -5668,7 +5673,7 @@ case 'anonymous':
   let btn = [{
 urlButton: {
 displayText: 'Instagram',
-url: 'https://instagram.com/Yukishima3_'
+url: 'https://github.com/Vall-Afk'
 }
 }, {
 quickReplyButton: {
@@ -5904,17 +5909,15 @@ reply(`•Namabot : ${setting.botName}
 •Listban : ${banned.length}
 `)
 break
-case 'infoowner':
-pro = `*PROFILE OWNER AiinMd*
-•Nama : Diantara Kita
-•Umur : 99 Tahun
-•Asal : Jawa
-•IG   : -
-•FB   : -
-•Saya Pemain Server Advance Mobile Legends
-•Saya Bukan wibu :v ( Lord Rias Gremory Kawai :) )`
-naimi.sendMessage(m.chat, { video: { url:'https://a.uguu.se/XqseYfhr.mp4' }, gifPlayback: true , caption:pro}, { quoted: m })
-break
+case 'infoowner': {
+pro = `*PROFILE OWNER ${setting.botName}*
+•Owner : ${setting.ownerName}
+•WhatsApp : Nomor owner yang dikonfigurasi
+•Repository : https://github.com/Vall-Afk/gabut
+•Mode : WhatsApp Multi-Device`
+reply(pro)
+}
+
 case 'menu':
 case 'list':
 case 'help':
@@ -5923,13 +5926,13 @@ if (!isRegister) return reply(blomdaftar) & sendButMessage (sender, daftar1, daf
 karutamddd = await reSize(`./karuta/karuta.png`, 200, 200) 
 let bton = [{
 urlButton: {
-displayText: 'DONASI',
-url: 'https://saweria.co/Rzal223'
+displayText: 'OWNER GITHUB',
+url: 'https://github.com/Vall-Afk'
 }
 }, {
 urlButton: {
-displayText: 'INSTAGRAM',
-url: 'https://instagram.com/yusufriz00'
+displayText: 'OWNER GITHUB',
+url: 'https://github.com/Vall-Afk'
 }
 }, {
 quickReplyButton: {
@@ -5961,13 +5964,13 @@ naimi.sendMessage(from, { text: menulist, templateButtons: buttonsDefault, foote
 } else if (setbot.templateDocument) {
 let buttonmenu = [{
 urlButton: {
-displayText: 'DONASI',
-url: 'https://saweria.co/Rzal223'
+displayText: 'REPOSITORY',
+url: 'https://github.com/Vall-Afk/gabut'
 }
 }, {
 urlButton: {
 displayText: 'INSTAGRAM',
-url: 'https://instagram.com/yusufriz00'
+url: 'https://github.com/Vall-Afk'
 }
 }, {
 quickReplyButton: {
@@ -6079,3 +6082,8 @@ fs.watchFile(file, () => {
 	delete require.cache[file]
 	require(file)
 })
+
+
+module.exports.setBaileys = (baileys) => {
+    ;({ BufferJSON, WA_DEFAULT_EPHEMERAL, generateWAMessageFromContent, proto, generateWAMessageContent, generateWAMessage, prepareWAMessageMedia, areJidsSameUser, getContentType } = baileys)
+}
