@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+
+# WhatsApp Multi-Device credentials and sessions
+session/
+session_auth/
+*_auth/
+*.json
+!package.json
+!src/setting.json
+!src/database.json
+!database/**/*.json
+
+# Logs and runtime files
+npm-debug.log*
+yarn-debug.log*
+*.log
+*.tmp
+*.pid
+
+# Local environment secrets
+.env
+.env.*
+!.env.example
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
