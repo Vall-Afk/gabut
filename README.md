@@ -2,6 +2,17 @@
 
 **Laurentia-MD.V2** adalah bot WhatsApp berbasis Baileys Multi-Device, dikelola oleh **Vall**.
 
+## Kepemilikan dan pengembang
+
+**Laurentia-MD.V2 merupakan bot milik pribadi Vall-Afk/Strelicaa.**
+
+- **Pemilik / Owner:** Vall-Afk/Strelicaa.
+- **Nomor WhatsApp Owner:** 6287721373781
+- **Nama bot:** Laurentia-MD.V2
+- **Repository resmi:** https://github.com/Vall-Afk/gabut
+
+Script bot ini dikelola dan dikembangkan secara pribadi oleh owner. Identitas, konfigurasi, dan pengembangan proyek berada di bawah kendali Vall-Afk/Strelicaa. Dilarang menghapus atau mengganti atribusi kepemilikan tanpa izin owner.
+
 ## Persyaratan
 
 - Node.js 20 atau lebih baru
