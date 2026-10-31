@@ -16,16 +16,34 @@ const { smsg, isUrl, generateMessageTag, getBuffer, getSizeMedia, fetchJson, awa
 // message/contact cache this legacy bot actually uses.
 const store = {
     contacts: {},
-    messages: new Map(),
+    messages: {},
+    presences: {},
+    _chats: new Map(),
+    chats: {
+        all: () => [...store._chats.values()]
+    },
     bind(ev) {
         ev.on('messages.upsert', ({ messages = [] }) => {
             for (const message of messages) {
                 const jid = message.key?.remoteJid
                 const id = message.key?.id
                 if (!jid || !id) continue
-                if (!this.messages.has(jid)) this.messages.set(jid, new Map())
-                this.messages.get(jid).set(id, message)
+                if (!this.messages[jid]) this.messages[jid] = { array: [] }
+                const bucket = this.messages[jid].array
+                const existing = bucket.findIndex(item => item.key?.id === id)
+                if (existing >= 0) bucket[existing] = message
+                else bucket.unshift(message)
+                if (bucket.length > 50) bucket.length = 50
             }
+        })
+        ev.on('chats.upsert', updates => {
+            for (const chat of updates) if (chat.id) this._chats.set(chat.id, { ...(this._chats.get(chat.id) || {}), ...chat })
+        })
+        ev.on('chats.update', updates => {
+            for (const chat of updates) if (chat.id) this._chats.set(chat.id, { ...(this._chats.get(chat.id) || {}), ...chat })
+        })
+        ev.on('chats.delete', ids => {
+            for (const id of ids) this._chats.delete(typeof id === 'string' ? id : id.id)
         })
         ev.on('contacts.upsert', updates => {
             for (const contact of updates) {
@@ -37,9 +55,12 @@ const store = {
                 if (contact.id) this.contacts[contact.id] = { ...(this.contacts[contact.id] || {}), ...contact }
             }
         })
+        ev.on('presence.update', ({ id, presences }) => {
+            if (id) this.presences[id] = { ...(this.presences[id] || {}), ...(presences || {}) }
+        })
     },
     async loadMessage(jid, id) {
-        return this.messages.get(jid)?.get(id) || null
+        return this.messages[jid]?.array?.find(message => message.key?.id === id) || null
     }
 }
 const { color, bgcolor } = require("./lib/color")
@@ -66,7 +87,7 @@ async function startnaimi() {
     const naimi = naimiConnect({
         logger: pino({ level: 'silent' }),
         printQRInTerminal: true,
-        browser: ['Angel Multi Device', 'Safari', '1.0.0'],
+        browser: ['Laurentia-MD.V2', 'Chrome', '1.0.0'],
         auth: state,
         ...(version ? { version } : {})
     })
@@ -78,7 +99,7 @@ async function startnaimi() {
 ██║░╚██╗██║░░██║██║░░██║╚██████╔╝░░░██║░░░██║░░██║
 ╚═╝░░╚═╝╚═╝░░╚═╝╚═╝░░╚═╝░╚═════╝░░░░╚═╝░░░╚═╝░░╚═╝`, 'magenta'))
 	
-	console.log(color('======================', 'fuchsia'),color('\n[Yukishima 乂 KiZakiXD]', 'pink'),color('\nThanks To: \n➸ Allah Swt.\n➸ Dika Ardnt.\n➸ KiZakiXD\n➸ Yukishima', 'yellow'),color('\n======================', 'fuchsia'))
+	console.log(color('======================', 'fuchsia'),color('\n[Laurentia-MD.V2 | Vall]', 'pink'),color('\nThanks To: \n➸ Allah Swt.\n➸ Dika Ardnt.\n➸ KiZakiXD\n➸ Vall', 'yellow'),color('\n======================', 'fuchsia'))
     store.bind(naimi.ev)
 
     naimi.ws?.on?.('CB:call', async (json) => {
@@ -162,7 +183,7 @@ title: `WELCOME`,
 body: `Member ke : ${xmembers}`,
 mediaType:2,
 thumbnail: ppusernya,
-sourceUrl: `https://www.instagram.com/angelicxye`,
+sourceUrl: `https://github.com/Vall-Afk`,
 mediaUrl: `https://www.instagram.com/angelicxye`
 }}
 }
@@ -260,7 +281,7 @@ naimi.sendMessage(anu.id, buttonMessage, {quoted:unicorndoc})
 	for (let i of kon) {
 	    list.push({
 	    	displayName: await naimi.getName(i + '@s.whatsapp.net'),
-	    	vcard: `BEGIN:VCARD\nVERSION:3.0\nN:${await naimi.getName(i + '@s.whatsapp.net')}\nFN:${setting.ownerName}\nORG:${setting.deskripsi};\nitem1.TEL;waid=${i}:${i}\nitem1.X-ABLabel:Ponsel\nitem2.EMAIL;type=INTERNET:yukishima737@gmail.com\nitem2.X-ABLabel:Email\nitem3.URL:https://instagram.com/Yukishima3_\nitem3.X-ABLabel:Instagram\nitem4.ADR:;;Japan;;;;\nitem4.X-ABLabel:Region\nEND:VCARD`
+	    	vcard: `BEGIN:VCARD\nVERSION:3.0\nN:${await naimi.getName(i + '@s.whatsapp.net')}\nFN:${setting.ownerName}\nORG:${setting.deskripsi};\nitem1.TEL;waid=${i}:${i}\nitem1.X-ABLabel:Ponsel\nitem2.EMAIL;type=INTERNET:\nitem3.URL:https://github.com/Vall-Afk\nitem3.X-ABLabel:Instagram\nitem4.ADR:;;Japan;;;;\nitem4.X-ABLabel:Region\nEND:VCARD`
 	    })
 	}
 	naimi.sendMessage(jid, { contacts: { displayName: `${list.length} Kontak`, contacts: list }, ...opts }, { quoted })
