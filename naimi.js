@@ -1294,7 +1294,7 @@ break
 case 'donasi':
   if (!isRegister) return reply(blomdaftar) & sendButMessage (sender, daftar1, daftar2, daftar3, { quoted: m}) 
     if (isBan) return reply(mess.banned)
-  reply('Donasi seikhlas nya kakak biar bot ini makin keren\nhttps://saweria.co/Rzal223\n\n*Donasi Lah PARA EPIC ABADDI*')
+  reply('Repository dan informasi pengembangan Laurentia-MD.V2:\nhttps://github.com/Vall-Afk/gabut')
 break
 case 'premium2':
 if (!isOwner) return reply(mess.owner)
@@ -5927,7 +5927,7 @@ url: 'https://github.com/Vall-Afk'
 }
 }, {
 urlButton: {
-displayText: 'INSTAGRAM',
+displayText: 'OWNER GITHUB',
 url: 'https://github.com/Vall-Afk'
 }
 }, {
@@ -5960,8 +5960,8 @@ naimi.sendMessage(from, { text: menulist, templateButtons: buttonsDefault, foote
 } else if (setbot.templateDocument) {
 let buttonmenu = [{
 urlButton: {
-displayText: 'DONASI',
-url: 'https://saweria.co/Rzal223'
+displayText: 'REPOSITORY',
+url: 'https://github.com/Vall-Afk/gabut'
 }
 }, {
 urlButton: {
