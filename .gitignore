@@ -5,11 +5,7 @@ node_modules/
 session/
 session_auth/
 *_auth/
-*.json
-!package.json
-!src/setting.json
-!src/database.json
-!database/**/*.json
+/session.json
 
 # Logs and runtime files
 npm-debug.log*
