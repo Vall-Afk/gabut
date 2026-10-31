@@ -27,6 +27,9 @@ jobs:
       - name: Verify Baileys ESM exports
         run: |
           node --input-type=module -e "import * as m from '@whiskeysockets/baileys'; for (const key of ['default','useMultiFileAuthState','fetchLatestBaileysVersion','DisconnectReason','generateForwardMessageContent','prepareWAMessageMedia','generateWAMessageFromContent','downloadContentFromMessage','jidDecode','proto']) if (!(key in m)) throw new Error('Missing Baileys export: ' + key); console.log('Baileys ESM exports OK')"
+      - name: Smoke-test CommonJS handler loading
+        run: |
+          node --input-type=commonjs -e "(async () => { const baileys = await import('@whiskeysockets/baileys'); const helpers = require('./lib/myfunc'); helpers.setBaileys(baileys); const handler = require('./naimi'); if (typeof handler !== 'function' || typeof handler.setBaileys !== 'function') throw new Error('Handler export/injection unavailable'); handler.setBaileys(baileys); console.log('CommonJS handler and helper load OK') })().catch(error => { console.error(error); process.exit(1) })"
       - name: Verify owner configuration and branding
         run: |
           node -e "const s=require('./src/setting.json'); if(s.botName!=='Laurentia-MD.V2') throw new Error('Wrong bot name'); if(!Array.isArray(s.ownerNumber)||!s.ownerNumber.length) throw new Error('Owner number missing'); if(!s.owner1?.length||!s.owner) throw new Error('Owner contact config incomplete'); console.log('Owner config OK; number retained without printing it')"
