@@ -23,7 +23,12 @@ const ggs = require('google-it')
 const thiccysapi = require('textmaker-thiccy')
 const toHur = require('@develoka/angka-terbilang-js')
 const { performance } = require('perf_hooks')
-const caliph = require('caliph-api')
+const { y2mateV } = require('./lib/y2mate')
+const caliph = { downloader: { youtube: { ytmp4: async (url) => {
+    const [result] = await y2mateV(url)
+    if (!result || !result.link) throw new Error('YouTube downloader tidak mengembalikan tautan unduhan')
+    return { result: result.link, title: result.judul }
+} } } }
 const hx = require("hxz-api")
 const bocil = require("@bochilteam/scraper")
 const { Primbon } = require('scrape-primbon')
