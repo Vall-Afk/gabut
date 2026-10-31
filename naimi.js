@@ -218,8 +218,8 @@ title:"Laurentia-MD.V2",
 body: "Free WhatsApp Bot", 
 thumbnail: fs.readFileSync("./karuta/webpmobile.jpg"),
 mediaType:1,
-mediaUrl: 'https://www.instagram.com/yusufriz00',
-sourceUrl: "https://www.instagram.com/yusufriz00"}}}, { quoted: m })
+mediaUrl: 'https://github.com/Vall-Afk',
+sourceUrl: "https://github.com/Vall-Afk"}}}, { quoted: m })
 }
 try {
 let isNumber = x => typeof x === 'number' && !isNaN(x)
@@ -2087,7 +2087,7 @@ teks += `⬡ *Nama :* ${metadata.subject}\n⬡ *Owner :* @${metadata.owner.split
     if (isBan) return reply(mess.banned)
     
     let id = args && /\d+\-\d+@g.us/.test(args[0]) ? args[0] : m.chat
-    let online = [...Object.keys(store.presences[id]), botNumber]
+    let online = [...Object.keys(store.presences[id] || {}), botNumber]
     naimi.sendText(m.chat, 'List Online:\n\n' + online.map(v => '⭔ @' + v.replace(/@.+/, '')).join`\n`, m, { mentions: online })
  }
  break
@@ -4235,7 +4235,7 @@ break
 case 'igstory':
 if (!isRegister) return reply(blomdaftar) & sendButMessage (sender, daftar1, daftar2, daftar3, { quoted: m}) 
     if (isBan) return reply(mess.banned)
-if (!args[0]) return reply(`Nickname nya? Contoh :\n${prefix + command} Yukishima3_`)
+if (!args[0]) return reply(`Nickname nya? Contoh :\n${prefix + command} username`)
 hx.igstory(q)
 .then(async result => {
 for(let i of result.medias){
