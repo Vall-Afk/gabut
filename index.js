@@ -184,7 +184,7 @@ body: `Member ke : ${xmembers}`,
 mediaType:2,
 thumbnail: ppusernya,
 sourceUrl: `https://github.com/Vall-Afk`,
-mediaUrl: `https://www.instagram.com/angelicxye`
+mediaUrl: `https://github.com/Vall-Afk`
 }}
 }
 naimi.sendMessage(anu.id, buttonMessage, {quoted:unicorndoc})
@@ -215,8 +215,8 @@ title: `GOOD BYE`,
 body: `Member ke : ${xmembers}`,
 mediaType:2,
 thumbnail: ppusernya,
-sourceUrl: `https://www.instagram.com/angelicxye`,
-mediaUrl: `https://www.instagram.com/angelicxye`
+sourceUrl: `https://github.com/Vall-Afk`,
+mediaUrl: `https://github.com/Vall-Afk`
 }}
 }
 naimi.sendMessage(anu.id, buttonMessage, {quoted:unicorndoc})
@@ -281,7 +281,7 @@ naimi.sendMessage(anu.id, buttonMessage, {quoted:unicorndoc})
 	for (let i of kon) {
 	    list.push({
 	    	displayName: await naimi.getName(i + '@s.whatsapp.net'),
-	    	vcard: `BEGIN:VCARD\nVERSION:3.0\nN:${await naimi.getName(i + '@s.whatsapp.net')}\nFN:${setting.ownerName}\nORG:${setting.deskripsi};\nitem1.TEL;waid=${i}:${i}\nitem1.X-ABLabel:Ponsel\nitem2.EMAIL;type=INTERNET:\nitem3.URL:https://github.com/Vall-Afk\nitem3.X-ABLabel:Instagram\nitem4.ADR:;;Japan;;;;\nitem4.X-ABLabel:Region\nEND:VCARD`
+	    	vcard: `BEGIN:VCARD\nVERSION:3.0\nN:${await naimi.getName(i + '@s.whatsapp.net')}\nFN:${setting.ownerName}\nORG:${setting.deskripsi};\nitem1.TEL;waid=${i}:${i}\nitem1.X-ABLabel:Ponsel\nitem2.URL:https://github.com/Vall-Afk\nitem2.X-ABLabel:GitHub\nEND:VCARD`
 	    })
 	}
 	naimi.sendMessage(jid, { contacts: { displayName: `${list.length} Kontak`, contacts: list }, ...opts }, { quoted })
