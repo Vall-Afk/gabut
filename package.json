@@ -87,5 +87,8 @@
     "@whiskeysockets/baileys": "6.7.24",
     "ms": "^2.1.3",
     "performance-now": "^2.1.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
   }
 }
