@@ -1,9 +1,8 @@
 require('./src/config')
-const { default: naimiConnect, useSingleFileAuthState, DisconnectReason, generateForwardMessageContent, prepareWAMessageMedia, generateWAMessageFromContent, generateMessageID, downloadContentFromMessage, makeInMemoryStore, jidDecode, proto } = require("@adiwajshing/baileys")
+const { default: naimiConnect, useMultiFileAuthState, fetchLatestBaileysVersion, DisconnectReason, generateForwardMessageContent, prepareWAMessageMedia, generateWAMessageFromContent, generateMessageID, downloadContentFromMessage, makeInMemoryStore, jidDecode, proto } = require("@whiskeysockets/baileys")
 const fs = require('fs')
 let setting = JSON.parse(fs.readFileSync('./src/setting.json'))
 let welkom = JSON.parse(fs.readFileSync('./database/group/welcome.json'))
-const { state, saveState } = useSingleFileAuthState(`./${setting.sessionName}.json`)
 const pino = require('pino')
 const chalk = require('chalk')
 const FileType = require('file-type')
@@ -14,24 +13,20 @@ const { smsg, isUrl, generateMessageTag, getBuffer, getSizeMedia, fetchJson, awa
 
 const store = makeInMemoryStore({ logger: pino().child({ level: 'silent', stream: 'store' }) })
 const { color, bgcolor } = require("./lib/color")
-const getVersionWaweb = () => {
+async function startnaimi() {
+    const { state, saveCreds } = await useMultiFileAuthState(`./${setting.sessionName}_auth`)
     let version
     try {
-        let a = fetchJson('https://web.whatsapp.com/check-update?version=1&platform=web')
-        version = [a.currentVersion.replace(/[.]/g, ', ')]
-    } catch {
-        version = [2, 2204, 13]
+        ({ version } = await fetchLatestBaileysVersion())
+    } catch (error) {
+        console.warn('[Baileys] Gagal mengambil versi WhatsApp terbaru; memakai versi bawaan library.', error.message)
     }
-    return version
-}
-
-async function startnaimi() {
     const naimi = naimiConnect({
         logger: pino({ level: 'silent' }),
         printQRInTerminal: true,
-        browser: ['Angel Multi Device','Safari','1.0.0'],
+        browser: ['Angel Multi Device', 'Safari', '1.0.0'],
         auth: state,
-        version: getVersionWaweb() || [2, 2204, 13]
+        ...(version ? { version } : {})
     })
     console.log(color('', 'cyan'), color(`
 ██╗░░██╗░█████╗░██████╗░██╗░░░██╗████████╗░█████╗░
@@ -240,7 +235,7 @@ naimi.sendMessage(anu.id, buttonMessage, {quoted:unicorndoc})
         console.log('Koneksi Terhubung...', update)
     })
 
-    naimi.ev.on('creds.update', saveState)
+    naimi.ev.on('creds.update', saveCreds)
 
     // Add Other
     /** Send Button 5 Image
