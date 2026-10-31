@@ -1,11 +1,11 @@
 {
-  "name": "-",
-  "description": "Whatsapp Using Lib Baileys Multi Device",
+  "name": "laurentia-md-v2",
+  "description": "Laurentia-MD.V2 — WhatsApp Multi-Device bot",
   "version": "1.0.0",
   "main": "index.js",
   "type": "commonjs",
   "scripts": {
-    "start": "node index"
+    "start": "node index.js"
   },
   "keywords": [
     "termux",
@@ -16,9 +16,11 @@
     "baileys-md",
     "bot",
     "bot-md",
-    "multi-device"
+    "multi-device",
+    "laurentia",
+    "laurentia-md-v2"
   ],
-  "author": "-",
+  "author": "Vall-Afk",
   "license": "MIT",
   "dependencies": {
     "@bochilteam/scraper": "^3.0.0",
