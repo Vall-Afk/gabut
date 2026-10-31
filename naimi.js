@@ -131,7 +131,7 @@ const command = body.replace(prefix, '').trim().split(/ +/).shift().toLowerCase(
 const args = body.trim().split(/ +/).slice(1)
 const pushname = m.pushName || "No Name"
 const botNumber = await naimi.decodeJid(naimi.user.id)
-const isOwner = setting.ownerNumber == m.sender ? true : ["6289519240209@s.whatsapp.net"].includes(m.sender) ? true : false
+const isOwner = Array.isArray(setting.ownerNumber) && setting.ownerNumber.includes(m.sender)
 const itsMe = m.sender == botNumber ? true : false
 const text = args.join(' ')
 const q = args.join(' ')
@@ -214,7 +214,7 @@ participant: `0@s.whatsapp.net`, ...(from ?
 }
 	const kmd = (teks) => {
 naimi.sendMessage(from, { text : teks, contextInfo:{externalAdReply:{
-title:"AiinMd BOT",
+title:"Laurentia-MD.V2",
 body: "Free WhatsApp Bot", 
 thumbnail: fs.readFileSync("./karuta/webpmobile.jpg"),
 mediaType:1,
@@ -1022,7 +1022,7 @@ Imgnah = await getBuffer(`https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9Gc
 let btn886 = [{
 urlButton: {
 displayText: 'Instagram',
-url: 'https://instagram.com/yusufriz00'
+url: 'https://github.com/Vall-Afk'
 }
 }, {
 quickReplyButton: {
@@ -1957,7 +1957,7 @@ for (let i of anu) {
     let btn = [{
 urlButton: {
 displayText: 'Instagram',
-url: 'https://instagram.com/Yukishima3_'
+url: 'https://github.com/Vall-Afk'
 }
 }, {
 quickReplyButton: {
@@ -2035,7 +2035,7 @@ await sleep(1500)
 let btn = [{
 urlButton: {
 displayText: 'Instagram',
-url: 'https://instagram.com/yusufriz00'
+url: 'https://github.com/Vall-Afk'
 }
 }, {
 quickReplyButton: {
@@ -2171,7 +2171,7 @@ break
 case 'command':
   let sections = [
 {
-title: "DAFTAR MENU AiinMd BOT",
+title: "DAFTAR MENU Laurentia-MD.V2",
 rows: [
 {title: "𝗠𝗔𝗜𝗡 𝗠𝗘𝗡𝗨", rowId: `mainmenu`, description: `Menampilkan daftar main menu`},
 {title: "𝗚𝗥𝗢𝗨𝗣 𝗠𝗘𝗡𝗨", rowId: `groupmenu`, description: `Menampilkan daftar group menu`},
@@ -2204,7 +2204,7 @@ rows: [{title: "𝗢𝗪𝗡𝗘𝗥 𝗕𝗢𝗧", rowId: `owner`, description:
 ]
 }, 
 ]
-naimi.sendListMsg(m.chat, `Hallo ${pushname} ${ucapanWaktu}\nPilih salah satu menu di bawah`,`*© AiinMd*`, `*LIST MENU KARUTA MD*`, `Click Here`, sections, m)
+naimi.sendListMsg(m.chat, `Hallo ${pushname} ${ucapanWaktu}\nPilih salah satu menu di bawah`,`*© Laurentia-MD.V2*`, `*LIST MENU KARUTA MD*`, `Click Here`, sections, m)
 ///////MENU
 break
 case 'cerpenmenu':
@@ -5669,7 +5669,7 @@ case 'anonymous':
   let btn = [{
 urlButton: {
 displayText: 'Instagram',
-url: 'https://instagram.com/Yukishima3_'
+url: 'https://github.com/Vall-Afk'
 }
 }, {
 quickReplyButton: {
@@ -5905,17 +5905,15 @@ reply(`•Namabot : ${setting.botName}
 •Listban : ${banned.length}
 `)
 break
-case 'infoowner':
-pro = `*PROFILE OWNER AiinMd*
-•Nama : Diantara Kita
-•Umur : 99 Tahun
-•Asal : Jawa
-•IG   : -
-•FB   : -
-•Saya Pemain Server Advance Mobile Legends
-•Saya Bukan wibu :v ( Lord Rias Gremory Kawai :) )`
-naimi.sendMessage(m.chat, { video: { url:'https://a.uguu.se/XqseYfhr.mp4' }, gifPlayback: true , caption:pro}, { quoted: m })
-break
+case 'infoowner': {
+pro = `*PROFILE OWNER ${setting.botName}*
+•Owner : ${setting.ownerName}
+•WhatsApp : Nomor owner yang dikonfigurasi
+•Repository : https://github.com/Vall-Afk/gabut
+•Mode : WhatsApp Multi-Device`
+reply(pro)
+}
+
 case 'menu':
 case 'list':
 case 'help':
@@ -5924,13 +5922,13 @@ if (!isRegister) return reply(blomdaftar) & sendButMessage (sender, daftar1, daf
 karutamddd = await reSize(`./karuta/karuta.png`, 200, 200) 
 let bton = [{
 urlButton: {
-displayText: 'DONASI',
-url: 'https://saweria.co/Rzal223'
+displayText: 'OWNER GITHUB',
+url: 'https://github.com/Vall-Afk'
 }
 }, {
 urlButton: {
 displayText: 'INSTAGRAM',
-url: 'https://instagram.com/yusufriz00'
+url: 'https://github.com/Vall-Afk'
 }
 }, {
 quickReplyButton: {
@@ -5968,7 +5966,7 @@ url: 'https://saweria.co/Rzal223'
 }, {
 urlButton: {
 displayText: 'INSTAGRAM',
-url: 'https://instagram.com/yusufriz00'
+url: 'https://github.com/Vall-Afk'
 }
 }, {
 quickReplyButton: {
