@@ -1,5 +1,5 @@
 require('./src/config')
-const { default: naimiConnect, useMultiFileAuthState, fetchLatestBaileysVersion, DisconnectReason, generateForwardMessageContent, prepareWAMessageMedia, generateWAMessageFromContent, generateMessageID, downloadContentFromMessage, makeInMemoryStore, jidDecode, proto } = require("@whiskeysockets/baileys")
+const { default: naimiConnect, useMultiFileAuthState, fetchLatestBaileysVersion, DisconnectReason, generateForwardMessageContent, prepareWAMessageMedia, generateWAMessageFromContent, downloadContentFromMessage, jidDecode, proto } = require("@whiskeysockets/baileys")
 const fs = require('fs')
 let setting = JSON.parse(fs.readFileSync('./src/setting.json'))
 let welkom = JSON.parse(fs.readFileSync('./database/group/welcome.json'))
@@ -11,7 +11,36 @@ const moment = require('moment-timezone')
 const { imageToWebp, videoToWebp, writeExifImg, writeExifVid } = require('./lib/exif')
 const { smsg, isUrl, generateMessageTag, getBuffer, getSizeMedia, fetchJson, await, sleep } = require('./lib/myfunc')
 
-const store = makeInMemoryStore({ logger: pino().child({ level: 'silent', stream: 'store' }) })
+// Baileys 6.7.x no longer exports makeInMemoryStore; keep the small
+// message/contact cache this legacy bot actually uses.
+const store = {
+    contacts: {},
+    messages: new Map(),
+    bind(ev) {
+        ev.on('messages.upsert', ({ messages = [] }) => {
+            for (const message of messages) {
+                const jid = message.key?.remoteJid
+                const id = message.key?.id
+                if (!jid || !id) continue
+                if (!this.messages.has(jid)) this.messages.set(jid, new Map())
+                this.messages.get(jid).set(id, message)
+            }
+        })
+        ev.on('contacts.upsert', updates => {
+            for (const contact of updates) {
+                if (contact.id) this.contacts[contact.id] = { ...(this.contacts[contact.id] || {}), ...contact }
+            }
+        })
+        ev.on('contacts.update', updates => {
+            for (const contact of updates) {
+                if (contact.id) this.contacts[contact.id] = { ...(this.contacts[contact.id] || {}), ...contact }
+            }
+        })
+    },
+    async loadMessage(jid, id) {
+        return this.messages.get(jid)?.get(id) || null
+    }
+}
 const { color, bgcolor } = require("./lib/color")
 async function startnaimi() {
     const { state, saveCreds } = await useMultiFileAuthState(`./${setting.sessionName}_auth`)
