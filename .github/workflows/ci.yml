@@ -10,7 +10,7 @@ on:
       - master
 
 jobs:
-  syntax:
+  syntax-and-install:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -22,10 +22,11 @@ jobs:
       - name: Check JavaScript syntax
         run: |
           find . -path './node_modules' -prune -o -name '*.js' -type f -print0 | xargs -0 -n1 node --check
-      - name: Verify Baileys ESM import in isolation
+      - name: Install project dependencies
+        run: npm install --ignore-scripts --legacy-peer-deps --no-audit --no-fund
+      - name: Verify Baileys ESM exports
         run: |
-          mkdir -p /tmp/baileys-smoke
-          cd /tmp/baileys-smoke
-          npm init -y
-          npm install --ignore-scripts --no-audit --no-fund @whiskeysockets/baileys@6.7.24
-          node --input-type=module -e "import('/tmp/baileys-smoke/node_modules/@whiskeysockets/baileys/lib/index.js').then(m => { for (const key of ['default','useMultiFileAuthState','fetchLatestBaileysVersion','DisconnectReason','proto']) if (!(key in m)) throw new Error('Missing Baileys export: ' + key); console.log('Baileys ESM exports OK') })"
+          node --input-type=module -e "import * as m from '@whiskeysockets/baileys'; for (const key of ['default','useMultiFileAuthState','fetchLatestBaileysVersion','DisconnectReason','generateForwardMessageContent','prepareWAMessageMedia','generateWAMessageFromContent','downloadContentFromMessage','jidDecode','proto']) if (!(key in m)) throw new Error('Missing Baileys export: ' + key); console.log('Baileys ESM exports OK')"
+      - name: Verify owner configuration and branding
+        run: |
+          node -e "const s=require('./src/setting.json'); if(s.botName!=='Laurentia-MD.V2') throw new Error('Wrong bot name'); if(!Array.isArray(s.ownerNumber)||!s.ownerNumber.length) throw new Error('Owner number missing'); if(!s.owner1?.length||!s.owner) throw new Error('Owner contact config incomplete'); console.log('Owner config OK; number retained without printing it')"
