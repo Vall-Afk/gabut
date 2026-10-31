@@ -1,5 +1,6 @@
 require('./src/config')
-const { default: naimiConnect, useMultiFileAuthState, fetchLatestBaileysVersion, DisconnectReason, generateForwardMessageContent, prepareWAMessageMedia, generateWAMessageFromContent, downloadContentFromMessage, jidDecode, proto } = require("@whiskeysockets/baileys")
+let naimiConnect, useMultiFileAuthState, fetchLatestBaileysVersion, DisconnectReason, generateForwardMessageContent, prepareWAMessageMedia, generateWAMessageFromContent, downloadContentFromMessage, jidDecode, proto
+let baileysModule
 const fs = require('fs')
 let setting = JSON.parse(fs.readFileSync('./src/setting.json'))
 let welkom = JSON.parse(fs.readFileSync('./database/group/welcome.json'))
@@ -43,6 +44,17 @@ const store = {
 }
 const { color, bgcolor } = require("./lib/color")
 async function startnaimi() {
+    try {
+        baileysModule = await import('@whiskeysockets/baileys')
+        ;({ default: naimiConnect, useMultiFileAuthState, fetchLatestBaileysVersion, DisconnectReason, generateForwardMessageContent, prepareWAMessageMedia, generateWAMessageFromContent, downloadContentFromMessage, jidDecode, proto } = baileysModule)
+        const myfunc = require('./lib/myfunc')
+        myfunc.setBaileys(baileysModule)
+        const naimiHandler = require('./naimi')
+        naimiHandler.setBaileys(baileysModule)
+    } catch (error) {
+        console.error('[Baileys] Gagal memuat Baileys ESM. Pastikan Node.js >=20 dan dependency terpasang.', error)
+        process.exit(1)
+    }
     const { state, saveCreds } = await useMultiFileAuthState(`./${setting.sessionName}_auth`)
     let version
     try {
@@ -87,7 +99,7 @@ async function startnaimi() {
         if (!naimi.public && !mek.key.fromMe && chatUpdate.type === 'notify') return
         if (mek.key.id.startsWith('BAE5') && mek.key.id.length === 16) return
         m = smsg(naimi, mek, store)
-        require("./naimi")(naimi, m, chatUpdate, store)
+        naimiHandler(naimi, m, chatUpdate, store)
         } catch (err) {
             console.log(err)
         }
