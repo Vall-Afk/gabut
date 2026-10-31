@@ -28,7 +28,7 @@ Edit `src/setting.json`:
 - `botName`: nama bot, default `Laurentia-MD.V2`
 - `sessionName`: nama dasar folder sesi autentikasi
 
-Nomor owner yang sudah tersimpan pada konfigurasi saat migrasi dipertahankan. Jangan membagikan folder sesi atau file kredensial karena dapat memberikan akses ke akun WhatsApp yang tertaut.
+Nomor owner yang dikonfigurasi untuk rilis ini adalah 6287721373781 (Vall-Afk/Strelicaa.). Jangan membagikan folder sesi atau file kredensial karena dapat memberikan akses ke akun WhatsApp yang tertaut.
 
 ## Menjalankan
 
